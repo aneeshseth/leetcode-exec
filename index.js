@@ -6,39 +6,55 @@ const app = express()
 const docker = new Docker({socketPath: "/var/run/docker.sock"});
 
 
-app.get("/", (req,res) => {
-    const code = `function getRandomNumber(min, max) {
-        return Math.floor(Math.random() * (max - min + 1)) + min;
+app.get("/", async (req,res) => {
+    let code = `function sumArray(arr) {
+        if (!Array.isArray(arr)) {
+          throw new Error('Input is not an array');
+        }
+      
+        let sum = 0;
+        for (let i = 0; i < arr.length; i++) {
+          if (typeof arr[i] === 'number') {
+            sum += arr[i];
+          }
+        }
+      
+        return sum;
       }
-      const randomNum = getRandomNumber(1, 100);
-    console.log(randomNum); // This will print a random number between 1 and 100.
-      `
+      const numbers = [1, 2, 3, 4, 5];
+const result = sumArray(numbers);
+console.log(result); // Output: 15
+
+    `
     const container = docker.getContainer("3765d44bc72e")
     container.start(async function (err, data) {
-        const exec = await container.exec({ Cmd: ['/bin/sh', '-c', 'cat /home/node/app/myfile.txt'], AttachStdin: true, AttachStdout: true });
-        const stream = await exec.start()
-        let output = ``;
-        stream.on('data', (chunk) => {
-          output += chunk.toString();
-        });
-        stream.on('end', async () => {
-            const addToVolume = await container.exec({ Cmd: ['/bin/sh', '-c', `echo "${code}" > /home/node/app/myfile.txt`], AttachStdin: true, AttachStdout: true });
+        const addToVolume = await container.exec({ Cmd: ['/bin/sh', '-c', `echo "${code}" > /home/node/app/myfile.txt`], AttachStdin: true, AttachStdout: true });
             const aTVStream = await addToVolume.start()
             aTVStream.on("data", () => {
             })              
             aTVStream.on('end', async () => {
-                const execCodeInContainer =  await container.exec({ Cmd: ["node", "-e", code], AttachStdin: true, AttachStdout: true });
-                const streamCode = await execCodeInContainer.start()
-                let codeOutput = '';
-                streamCode.on('data', (chunk) => {
-                  codeOutput = codeOutput.replace(/\s/g, '') 
-                  codeOutput += chunk.toString()
-                })
-                streamCode.on('end', () => {
-                  console.log(codeOutput)
+                const exec = await container.exec({ Cmd: ['/bin/sh', '-c', 'cat /home/node/app/myfile.txt'], AttachStdin: true, AttachStdout: true });
+                const stream = await exec.start()
+                let output = ``;
+                stream.on('data', (chunk) => {
+                  output += chunk.toString();
+                });
+                stream.on('end', async () => {
+                    output = output.substring(8,output.length - 1)
+                    console.log(code)
+                    console.log(typeof code)
+                    const execCodeInContainer =  await container.exec({ Cmd: ["node", "-e", `${output}`], AttachStdin: true, AttachStdout: true });
+                    const streamCode = await execCodeInContainer.start()
+                    let codeOutput = '';
+                    streamCode.on('data', (chunk) => {
+                      codeOutput = codeOutput.replace(/\s/g, '') 
+                      codeOutput += chunk.toString()
+                    })
+                    streamCode.on('end', () => {
+                      console.log(codeOutput)
+                    })
                 })
             })
-        })
     })
 })
 

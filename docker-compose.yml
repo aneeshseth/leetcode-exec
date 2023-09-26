@@ -1,0 +1,14 @@
+version: '3'
+
+services:
+  myapp2:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - myapp:/home/node/app
+
+volumes:
+  myapp:
