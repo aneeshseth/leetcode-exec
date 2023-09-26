@@ -16,6 +16,7 @@ Code Execution: The container processes the submitted code within the mounted vo
 
 Output Retrieval: The output of the code execution is captured.
 
-<img width="1133" alt="image" src="https://github.com/aneeshseth/leetcode-excecution-env/assets/122401851/bc6b2451-917c-43fa-b551-df63cd9bca97">
+<img width="1238" alt="image" src="https://github.com/aneeshseth/leetcode-exec/assets/122401851/5f90fe92-3712-4d91-bb41-70c8fe0206db">
+
 
 
