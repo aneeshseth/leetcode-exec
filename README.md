@@ -6,6 +6,8 @@ This project provides a LeetCode-type code execution environment where code can 
 
 # How it Works
 
+<img width="1238" alt="image" src="https://github.com/aneeshseth/leetcode-exec/assets/122401851/5f90fe92-3712-4d91-bb41-70c8fe0206db">
+
 Code Submission: Users submit their code to a designated backend route. 
 
 Volume Management: The submitted code is added to a Docker volume, which acts as shared storage between the host and the container.
@@ -16,7 +18,7 @@ Code Execution: The container processes the submitted code within the mounted vo
 
 Output Retrieval: The output of the code execution is captured.
 
-<img width="1238" alt="image" src="https://github.com/aneeshseth/leetcode-exec/assets/122401851/5f90fe92-3712-4d91-bb41-70c8fe0206db">
+
 
 
 
